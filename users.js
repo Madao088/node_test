@@ -3,7 +3,7 @@ var router=express.Router();
 var conn=require('./db')
 var mysql=require('mysql');
 var multer  = require('multer')
-var upload = multer()
+var upload = multer({ dest: './uploads/'});
 
 
 router.get('/',function(req,res){
@@ -199,7 +199,7 @@ router.put('/:id',function(req,res){
     
 })
 
-router.post('/upload',function(req,res){
+router.post('/upload',upload.single('file'),function(req,res){
     console.log(req.file);   
 });
 
