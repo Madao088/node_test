@@ -1,0 +1,20 @@
+{
+  "name": "first",
+  "version": "1.0.0",
+  "description": "first app",
+  "main": "index.js",
+  "scripts": {
+    "serve": "nodemon index.js"
+  },
+  "author": "Hammad Uzair",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.4",
+    "mongodb": "^2.2.31",
+    "mysql": "^2.14.1",
+    "neo4j-driver": "^1.4.0",
+    "nodemon": "^1.11.0",
+    "react-upload-file": "^2.0.0-beta.6",
+    "winston": "^2.3.1"
+  }
+}
