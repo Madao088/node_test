@@ -2,6 +2,8 @@ var express=require("express");
 var router=express.Router();
 var conn=require('./db')
 var mysql=require('mysql');
+var multer  = require('multer')
+var upload = multer()
 
 
 router.get('/',function(req,res){
@@ -196,5 +198,9 @@ router.put('/:id',function(req,res){
     })
     
 })
+
+router.post('/upload',function(req,res){
+    console.log(req.file);   
+});
 
 module.exports = router;
