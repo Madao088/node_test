@@ -199,8 +199,8 @@ router.put('/:id',function(req,res){
     
 })
 
-router.post('/upload',upload.single('file'),function(req,res){
-    console.log(req.file);   
+router.post('/upload',upload.any(),function(req,res){
+    console.log(req.files);   
 });
 
 module.exports = router;

@@ -1,7 +1,8 @@
 var express=require('express');
 var router=express.Router();
-var mongodb=require('./mongodb.js');
 var ObjectId = require('mongodb').ObjectID;
+var winston = require('winston');
+// winston.add(winston.transports.File, { filename: 'mylogfile.log', level: 'silly' });
 router.get('/',function(req,res){
     db.collection("users").find().toArray(function(err, results) {
         if (err){
@@ -128,6 +129,20 @@ router.put('/:id',function(req,res){
         }else
             res.status(200).json({"message":"success"});
     });
+})
+
+router.post('/bulk_state',function(req,res){
+    winston.log('info', 'Test Log Message', { anything: 'This is metadata' });
+    var batch = db.collection('states').initializeUnorderedBulkOp();
+    req.body.data.forEach(function(state){
+        batch.find( { name: state.name } ).upsert().updateOne(
+             {
+                 name:state.name
+                }
+            );
+    })
+    batch.execute();
+    res.status(200).json({"message":"success"});
 })
 
 module.exports = router;
