@@ -1,9 +1,14 @@
 var express=require('express');
 var router=express.Router();
 var ObjectId = require('mongodb').ObjectID;
-var winston = require('winston');
+
 // winston.add(winston.transports.File, { filename: 'mylogfile.log', level: 'silly' });
+
+
+
 router.get('/',function(req,res){
+    //logger.log('error', 'test message %s', 'my string');
+    
     db.collection("users").find().toArray(function(err, results) {
         if (err){
             res.statusMessage = "Server Error";
@@ -15,7 +20,11 @@ router.get('/',function(req,res){
 
 })
 
-
+router.get('/test/:id',function(req,res,next){
+    id=req.params.id;
+    console.log(id);
+    return next({statusCode : 412, message : "too lazy to implement"});
+})
 
 router.get('/states',function(req,res){
 
@@ -70,7 +79,7 @@ router.post('/',function(req,res){
     //             }
     //         });
     if(!req.body.data.name){
-         res.statusMessage = "Name Required";
+         res.statusMessage = "";
          res.status(412).end();
     }else if(!req.body.data.email){
          res.statusMessage = "Email Required";
@@ -132,7 +141,7 @@ router.put('/:id',function(req,res){
 })
 
 router.post('/bulk_state',function(req,res){
-    winston.log('info', 'Test Log Message', { anything: 'This is metadata' });
+   logger.log('info', 'test message %s', 'my string');
     var batch = db.collection('states').initializeUnorderedBulkOp();
     req.body.data.forEach(function(state){
         batch.find( { name: state.name } ).upsert().updateOne(
