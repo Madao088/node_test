@@ -6,8 +6,8 @@ var fs= require('file-system');
 
 // S3FS = require('s3fs'),
 // s3fsImpl = new S3FS('madairtest', {
-//     accessKeyId: 'AKIAILVP3GT7PGOULCYA',
-//     secretAccessKey: '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',
+//     accessKeyId: '',
+//     secretAccessKey: '+',
 //     region:'ap-south-1'
 // });
 
