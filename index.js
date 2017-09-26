@@ -6,6 +6,7 @@ var mongo_users=require('./mongo_users.js');
 var convert=require('./mysqltomongo.js');
 var mongodb=require('./mongodb.js');
 var winston = require('winston');
+var test=require('./s3_test.js');
 // parse application/x-www-form-urlencoded
 
 var logger = new (winston.Logger)({
@@ -49,6 +50,7 @@ app.use(function (req, res, next) {
 app.use('/convert', convert);
 app.use('/users', users);
 app.use('/mongo_users', mongo_users);
+app.use('/test', test);
 
 app.use(function (err, req, res, next) {
 	/* We log the error internaly */
