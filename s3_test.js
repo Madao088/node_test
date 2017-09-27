@@ -3,6 +3,7 @@ var router=express.Router();
 var multer  = require('multer')
 var upload = multer({ dest: './uploads/'});
 var fs= require('file-system');
+const config = require('./config');
 
 // S3FS = require('s3fs'),
 // s3fsImpl = new S3FS('madairtest', {
@@ -29,30 +30,38 @@ var fs= require('file-system');
 //     });
 // })
 var aws = require('aws-sdk');
-aws.config.loadFromPath('./AwsConfig.json');
+//aws.config.loadFromPath('./AwsConfig.json');
+aws.config={
+    "accessKeyId": config.s3_accessKeyId,
+    "secretAccessKey": 'config.s3_secretAccessKey',
+    "region": config.s3_region
+  }
 var s3 = new aws.S3();
 var myBucket = 'madairtest';
 
 router.post('/upload/',upload.any(),function(req,res,next){
 
     var file=req.files[0];
-    var stream = fs.createReadStream(file.path);
-        console.log(file);
+    Object.keys(req.files).forEach(function(key){
+        var file=req.files[key];
+        var stream = fs.createReadStream(file.path);
              params = {Bucket: 'madairtest', Key:file.filename, Body: stream};
         
              s3.putObject(params, function(err, data) {
         
                  if (err) {
-        
-                     console.log(err)
+                    console.log("called");
+                    return next(err);
         
                  } else {
         
-                     console.log(data);
+                    res.status(200).json(results);
         
                  }
         
               });
+                });
+    
 })
 
 

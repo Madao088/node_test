@@ -1,12 +1,14 @@
 var express=require("express");
 var app=express();
 var bodyParser = require('body-parser')
+var config = require('./config.js');
 var users=require('./users.js');
 var mongo_users=require('./mongo_users.js');
 var convert=require('./mysqltomongo.js');
 var mongodb=require('./mongodb.js');
 var winston = require('winston');
 var test=require('./s3_test.js');
+
 // parse application/x-www-form-urlencoded
 
 var logger = new (winston.Logger)({
@@ -65,7 +67,7 @@ app.use(function (err, req, res, next) {
     }
 
 	/* Finaly respond to the request */
-    res.status(err.statusCode || 500).json(err);
+    res.status(err.statusCode || 500).json(err.msg||"server error");
 });
 
 

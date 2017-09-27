@@ -11,7 +11,7 @@ router.get('/',function(req,res){
     
     db.collection("users").find().toArray(function(err, results) {
         if (err){
-            return next({message : "Server Error"});
+            return next(err);
         }
         else
             res.status(200).json(results);
@@ -22,14 +22,14 @@ router.get('/',function(req,res){
 router.get('/test/:id',function(req,res,next){
     id=req.params.id;
     console.log(id);
-    return next({statusCode : 412, message : "too lazy to implement"});
+    return next({statusCode : 412, msg : "too lazy to implement"});
 })
 
 router.get('/states',function(req,res){
 
     db.collection("states").find().toArray(function(err, results) {
         if (err){
-            return next({message : "Server Error"});
+            return next(err);
         }
         else
             res.status(200).json(results);
@@ -40,7 +40,7 @@ router.get('/states',function(req,res){
 router.get('/techs',function(req,res){
     db.collection("technologies").find().toArray(function(err, results) {
         if (err){
-            return next({message : "Server Error"});
+            return next(err);
         }
         else
             res.status(200).json(results);
@@ -52,7 +52,7 @@ router.get('/:id',function(req,res){
     id=req.params.id;
     db.collection("users").findOne({"_id": ObjectId(id)},function(err, results) {
         if (err){
-            return next({statusCode:404,message : "User does not exist"});
+            return next({statusCode:404,msg : "User does not exist"});
         }
         else
             res.status(200).json(results);
@@ -75,31 +75,31 @@ router.post('/',function(req,res){
     //             }
     //         });
     if(!req.body.data.name){
-        return next({statusCode:412,message : "Name Required"});
+        return next({statusCode:412,msg : "Name Required"});
     }else if(!req.body.data.email){
-        return next({statusCode:412,message : "Email Required"});
+        return next({statusCode:412,msg : "Email Required"});
     }else if(!req.body.data.address){
-        return next({statusCode:412,message : "Address Required"});
+        return next({statusCode:412,msg : "Address Required"});
     }else if(!req.body.data.gender){
-        return next({statusCode:412,message : "Gender Required"});
+        return next({statusCode:412,msg : "Gender Required"});
     }else if(!req.body.data.state){
-        return next({statusCode:412,message : "State Required"});
+        return next({statusCode:412,msg : "State Required"});
     }else if(validateEmail(req.body.data.email)==false){
-        return next({statusCode:412,message : "Email Incorrect"});
+        return next({statusCode:412,msg : "Email Incorrect"});
     }else{
         db.collection("users").findOne({"email":req.body.data.email},function(err,row){
             console.log
             if (row==null){
                 db.collection("users").save(req.body.data,function(err,result){
                         if (err){
-                            return next({message : "Server Error"});
+                            return next(err);
                         }else
                             res.status(200).json({"message":"success"});
                         
                     })
             }
                 else{
-                    return next({statusCode:412,message : "Email Already Exists"});
+                    return next({statusCode:412,msg : "Email Already Exists"});
                 }
         });
     }
@@ -109,7 +109,7 @@ router.delete('/:id',function(req,res){
     id=req.params.id;
     db.collection("users").remove({"_id": ObjectId(id)},function(err,result){
         if(err){
-            return next({statusCode:404,message : "User Does not Exist"});
+            return next({statusCode:404,msg : "User Does not Exist"});
         }else
             res.status(200).json({"message":"success"});
     });
@@ -120,7 +120,7 @@ router.put('/:id',function(req,res){
     req.body.data._id=ObjectId(id);
     db.collection("users").save(req.body.data,function(err,result){
         if(err){
-            return next({message : "Server Error"});
+            return next(err);
         }else
             res.status(200).json({"message":"success"});
     });
