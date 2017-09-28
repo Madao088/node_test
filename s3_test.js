@@ -33,15 +33,14 @@ var aws = require('aws-sdk');
 //aws.config.loadFromPath('./AwsConfig.json');
 aws.config={
     "accessKeyId": config.s3_accessKeyId,
-    "secretAccessKey": 'config.s3_secretAccessKey',
+    "secretAccessKey": config.s3_secretAccessKey,
     "region": config.s3_region
   }
 var s3 = new aws.S3();
 var myBucket = 'madairtest';
 
 router.post('/upload/',upload.any(),function(req,res,next){
-
-    var file=req.files[0];
+    console.log("called");
     Object.keys(req.files).forEach(function(key){
         var file=req.files[key];
         var stream = fs.createReadStream(file.path);
@@ -50,18 +49,43 @@ router.post('/upload/',upload.any(),function(req,res,next){
              s3.putObject(params, function(err, data) {
         
                  if (err) {
-                    console.log("called");
                     return next(err);
         
                  } else {
-        
-                    res.status(200).json(results);
+                     db.collection("files").save({url:'https://s3.ap-south-1.amazonaws.com/madairtest/'+file.filename},function(err,result){
+                        if (err){
+                            return next(err);
+                        }else
+                            return next({statusCode:200,data:{title:'file added to S3',message:'success'}});
+                        
+                    })
         
                  }
         
               });
                 });
     
+})
+
+router.get('/:id',function(req,res,next){
+    console.log(req.params.id);
+     params = {Bucket: 'madairtest', Key:req.params.id};
+    s3.deleteObject(params, function (err, data) {
+        if (data) {
+            console.log("hee");
+            db.collection("files").remove({url:'https://s3.ap-south-1.amazonaws.com/madairtest/'+req.params.id},function(err,result){
+                if(err){
+                    return next({statusCode:404,msg : "File Does not Exist"});
+                }else
+                    return next({statusCode:200,data:{title:'file deleted',message:'success'}});
+            });
+            
+        }
+        else {
+            console.log("thee");
+            return next(err);
+        }
+    });
 })
 
 

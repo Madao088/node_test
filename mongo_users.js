@@ -6,18 +6,21 @@ var ObjectId = require('mongodb').ObjectID;
 
 
 
-router.get('/',function(req,res){
+router.get('/',function(req,res,next){
     //logger.log('error', 'test message %s', 'my string');
     
     db.collection("users").find().toArray(function(err, results) {
         if (err){
             return next(err);
         }
-        else
-            res.status(200).json(results);
-    });
+        else{
+                //res.status(200).json(results);
+            return next({statusCode:200,data:results});
+        }
+       });
+})     
 
-})
+
 
 router.get('/test/:id',function(req,res,next){
     id=req.params.id;
@@ -32,30 +35,30 @@ router.get('/states',function(req,res){
             return next(err);
         }
         else
-            res.status(200).json(results);
+            return next({statusCode:200,data:results});
     });
 
 })
 
-router.get('/techs',function(req,res){
+router.get('/techs',function(req,res,next){
     db.collection("technologies").find().toArray(function(err, results) {
         if (err){
             return next(err);
         }
         else
-            res.status(200).json(results);
+            return next({statusCode:200,data:results});
     });
 
 })
 
-router.get('/:id',function(req,res){
+router.get('/:id',function(req,res,next){
     id=req.params.id;
     db.collection("users").findOne({"_id": ObjectId(id)},function(err, results) {
         if (err){
             return next({statusCode:404,msg : "User does not exist"});
         }
         else
-            res.status(200).json(results);
+            return next({statusCode:200,data:results});
     });
 
 })
@@ -63,7 +66,7 @@ function validateEmail(email) {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
 }
-router.post('/',function(req,res){
+router.post('/',function(req,res,next){
     // console.log(req.body.data);
     // Object.keys(req.body.data).forEach(function(key){
     //             if(req.body.data[key]==)
@@ -94,7 +97,7 @@ router.post('/',function(req,res){
                         if (err){
                             return next(err);
                         }else
-                            res.status(200).json({"message":"success"});
+                            return next({statusCode:200,data:{message:'success'}});
                         
                     })
             }
@@ -105,28 +108,28 @@ router.post('/',function(req,res){
     }
 });
 
-router.delete('/:id',function(req,res){
+router.delete('/:id',function(req,res,next){
     id=req.params.id;
     db.collection("users").remove({"_id": ObjectId(id)},function(err,result){
         if(err){
             return next({statusCode:404,msg : "User Does not Exist"});
         }else
-            res.status(200).json({"message":"success"});
+            return next({statusCode:200,data:{message:'success'}});
     });
 })
 
-router.put('/:id',function(req,res){
+router.put('/:id',function(req,res,next){
     id=req.params.id;
     req.body.data._id=ObjectId(id);
     db.collection("users").save(req.body.data,function(err,result){
         if(err){
             return next(err);
         }else
-            res.status(200).json({"message":"success"});
+            return next({statusCode:200,data:{message:'success'}});
     });
 })
 
-router.post('/bulk_state',function(req,res){
+router.post('/bulk_state',function(req,res,next){
 
     var batch = db.collection('states').initializeUnorderedBulkOp();
     req.body.data.forEach(function(state){
@@ -137,7 +140,7 @@ router.post('/bulk_state',function(req,res){
             );
     })
     batch.execute();
-    res.status(200).json({"message":"success"});
+    return next({statusCode:200,data:{message:'success'}});
 })
 
 module.exports = router;
